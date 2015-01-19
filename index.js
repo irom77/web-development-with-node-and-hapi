@@ -2,6 +2,8 @@ var hapi = require('hapi');
 var boom = require('boom');
 var good = require('good');
 var path = require('path');
+// own files
+var fortune = require('./lib/fortune.js');
 // call server contructor
 var server = new hapi.Server();
 server.connection({ port: 3000 });
@@ -44,7 +46,7 @@ server.route({
   path: '/about',
   handler: function(request, reply){
     // return reply('About Meadowlark Travel').type('text/plain');
-    return reply.view('about');
+    return reply.view('about', { fortune: fortune.getFortune() });
   }
 });
 // must be the last catch all
