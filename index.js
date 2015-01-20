@@ -1,21 +1,23 @@
-var hapi = require('hapi');
-var boom = require('boom');
-var good = require('good');
-var path = require('path');
-// own files
+var Hapi = require('hapi');
+var Boom = require('boom');
+var Good = require('good');
+var Path = require('path');
+
 var fortune = require('./lib/fortune.js');
+
 // call server contructor
-var server = new hapi.Server();
+var server = new Hapi.Server();
 server.connection({ port: 3000 });
+
 // configure templating
 server.views({
   engines: {
     // file extension: engine
     hbs: require('handlebars') // use hbs, not html
   },
-  path: path.join(__dirname, 'templates'), // set templates directory
-  layout: 'main', // use a 'main' layout
-  layoutKeyword: 'content' // where the 'main' layout's templates will be placed
+  path: Path.join(__dirname, 'views'), // set templates directory
+  layout: 'layouts/main', // use a 'main' layout
+  layoutKeyword: 'body' // where the 'main' layout's templates will be placed
 });
 
 // serve static files
@@ -36,7 +38,6 @@ server.route({
   method:'GET',
   path: '/',
   handler: function(request, reply){
-    // return reply('Meadowlark Travel').type('text/plain');
     return reply.view('home');
   }
 });
@@ -45,7 +46,6 @@ server.route({
   method:'GET',
   path: '/about',
   handler: function(request, reply){
-    // return reply('About Meadowlark Travel').type('text/plain');
     return reply.view('about', { fortune: fortune.getFortune() });
   }
 });
@@ -55,7 +55,7 @@ server.route({
   method: '*',
   path: '/{p*}',
   handler: function(request, reply){
-    return reply(boom.notFound('Error 404'));
+    return reply(Boom.notFound('Error 404'));
   }
 });
 
@@ -65,13 +65,13 @@ server.route({
 //   path: '/*',
 //   handler: function(request, reply){
 //     var error = new Error('Server Error');
-//     boom.wrap(error, 500);
+//     Boom.wrap(error, 500);
 //   }
 // });
 
 // add good for console info
 server.register({
-  register: good,
+  register: Good,
   options: {
     reporters: [{
       reporter: require('good-console'),
